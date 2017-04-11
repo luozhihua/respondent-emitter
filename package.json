@@ -1,0 +1,25 @@
+{
+  "name": "respondent-emitter",
+  "version": "1.0.0",
+  "description": "An event emitter that can get return values of event listeners.",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/babel -o index.js event.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "event",
+    "emitter",
+    "on",
+    "off",
+    "emit",
+    "once"
+  ],
+  "author": "luozhihua",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}
