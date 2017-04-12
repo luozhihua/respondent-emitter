@@ -8,7 +8,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Events = function () {
+var Events = exports.Events = function () {
 	function Events(type) {
 		_classCallCheck(this, Events);
 
@@ -44,6 +44,9 @@ var Events = function () {
 								listeners[i] = null;
 							}
 						});
+						_this.eventStore[eventType] = listeners.filter(function (fn) {
+							return typeof fn === 'function';
+						});
 					} else {
 						delete _this.eventStore[eventType];
 					}
@@ -66,10 +69,10 @@ var Events = function () {
 						if (typeof fn === 'function') {
 							var res = fn.apply(_this2);
 							result = result === false ? false : res;
-						}
 
-						if (fn.once) {
-							_this2.off(type, fn);
+							if (fn.once) {
+								_this2.off(type, fn);
+							}
 						}
 					});
 				}
@@ -81,5 +84,3 @@ var Events = function () {
 
 	return Events;
 }();
-
-exports.default = Events;

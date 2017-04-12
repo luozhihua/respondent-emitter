@@ -1,4 +1,4 @@
-export default class Events {
+export class Events {
 
 	constructor(type) {
 		this.eventStore = {}
@@ -28,6 +28,9 @@ export default class Events {
 							listeners[i] = null
 						}
 					})
+					this.eventStore[eventType] = listeners.filter((fn)=>{
+						return typeof fn === 'function'
+					})
 				} else {
 					delete this.eventStore[eventType]
 				}
@@ -47,11 +50,12 @@ export default class Events {
 					if (typeof fn === 'function') {
 						let res = fn.apply(this);
 						result = result === false ? false : res;
+
+						if (fn.once) {
+							this.off(type, fn)
+						}
 					}
 
-					if (fn.once) {
-						this.off(type, fn)
-					}
 				})
 
 			}
