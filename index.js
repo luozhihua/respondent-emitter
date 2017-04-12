@@ -18,12 +18,11 @@ var Events = function () {
 	_createClass(Events, [{
 		key: 'on',
 		value: function on(type, listener) {
-			if (typeof listener === 'function') {
-				let namespace = type.split('.');
-				this.eventStore[type] = this.eventStore[type] || [];
-				listener.namespace = type;
-				this.eventStore[namespace[0]].push(listener);
-			}
+			var namespace = type.split('.');
+			this.eventStore[type] = this.eventStore[type] || [];
+			listener.namespace = type;
+
+			this.eventStore[namespace[0]].push(listener);
 		}
 	}, {
 		key: 'once',
@@ -37,22 +36,25 @@ var Events = function () {
 			var _this = this;
 
 			Object.keys(this.eventStore).forEach(function (eventType) {
-				var listeners = _this.eventStore[eventType];
 
-				if (eventType.indexOf(type) !== -1) {
+				// 不含 namespace
+				if (type === eventType && !listener) {
+					delete _this.eventStore[eventType];
+					return;
+				} else {
+					var listeners = _this.eventStore[eventType];
 
-					if (listener) {
-						listeners.forEach(function (fn, i) {
-							if (fn === listener) {
-								listeners[i] = null;
-							}
-						});
-						_this.eventStore[eventType] = listeners.filter(function (fn) {
-							return typeof fn === 'function';
-						});
-					} else {
-						delete _this.eventStore[eventType];
-					}
+					listeners.forEach(function (fn, i) {
+						var isMatch = fn.namespace.indexOf(type) !== -1;
+
+						if (isMatch && (!listener || fn === listener)) {
+							listeners[i] = null;
+						}
+					});
+
+					_this.eventStore[eventType] = listeners.filter(function (fn) {
+						return typeof fn === 'function';
+					});
 				}
 			});
 		}
@@ -68,12 +70,11 @@ var Events = function () {
 					var listeners = _this2.eventStore[eventType];
 
 					listeners.forEach(function (fn, i) {
-
 						if (typeof fn === 'function') {
 							var res = fn.apply(_this2);
-							result = result === false ? false : res;
 
-							if (fn.once) {
+							result = result === false ? false : res;
+							if (fn && fn.once) {
 								_this2.off(type, fn);
 							}
 						}
