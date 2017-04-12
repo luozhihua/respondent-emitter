@@ -1,4 +1,4 @@
-export class Events {
+export default class Events {
 
 	constructor(type) {
 		this.eventStore = {}
