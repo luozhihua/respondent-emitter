@@ -5,10 +5,11 @@ export default class Events {
 	}
 
 	on (type, listener) {
+		let namespace = type.split('.')
 		this.eventStore[type] = this.eventStore[type] || []
-		listener.namespace = type.split('.')
+		listener.namespace = type
 
-		this.eventStore[listener.namespace[0]].push(listener)
+		this.eventStore[namespace[0]].push(listener)
 	}
 
 	once (type, listener) {
@@ -19,21 +20,25 @@ export default class Events {
 	off (type, listener) {
 
 		Object.keys(this.eventStore).forEach(eventType => {
-			if (eventType.indexOf(type) !== -1) {
+
+			// 不含 namespace
+			if (type === eventType && !listener) {
+				delete this.eventStore[eventType];
+				return;
+			} else {
 				let listeners = this.eventStore[eventType];
 
-				if (listener) {
-					listeners.forEach((fn, i) => {
-						if (fn === listener) {
-							listeners[i] = null
-						}
-					})
-					this.eventStore[eventType] = listeners.filter((fn)=>{
-						return typeof fn === 'function'
-					})
-				} else {
-					delete this.eventStore[eventType]
-				}
+				listeners.forEach((fn, i) => {
+					let isMatch = fn.namespace.indexOf(type) !== -1
+
+					if (isMatch && (!listener || fn === listener)) {
+						listeners[i] = null
+					}
+				})
+
+				this.eventStore[eventType] = listeners.filter((fn)=>{
+					return typeof fn === 'function'
+				})
 			}
 		});
 	}
@@ -46,18 +51,15 @@ export default class Events {
 				let listeners = this.eventStore[eventType];
 
 				listeners.forEach((fn, i) => {
-
 					if (typeof fn === 'function') {
 						let res = fn.apply(this);
-						result = result === false ? false : res;
 
-						if (fn.once) {
+						result = result === false ? false : res;
+						if (fn && fn.once) {
 							this.off(type, fn)
 						}
 					}
-
 				})
-
 			}
 		});
 

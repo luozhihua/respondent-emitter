@@ -18,10 +18,12 @@ var Events = function () {
 	_createClass(Events, [{
 		key: 'on',
 		value: function on(type, listener) {
-			this.eventStore[type] = this.eventStore[type] || [];
-			listener.namespace = type.split('.');
-
-			this.eventStore[listener.namespace[0]].push(listener);
+			if (typeof listener === 'function') {
+				let namespace = type.split('.');
+				this.eventStore[type] = this.eventStore[type] || [];
+				listener.namespace = type;
+				this.eventStore[namespace[0]].push(listener);
+			}
 		}
 	}, {
 		key: 'once',
@@ -35,8 +37,9 @@ var Events = function () {
 			var _this = this;
 
 			Object.keys(this.eventStore).forEach(function (eventType) {
+				var listeners = _this.eventStore[eventType];
+
 				if (eventType.indexOf(type) !== -1) {
-					var listeners = _this.eventStore[eventType];
 
 					if (listener) {
 						listeners.forEach(function (fn, i) {
