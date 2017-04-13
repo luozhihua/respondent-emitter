@@ -8,21 +8,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var storeId = Symbol('event_store_id');
+
 var Events = function () {
 	function Events(type) {
 		_classCallCheck(this, Events);
 
-		this.eventStore = {};
+		this[storeId] = {};
 	}
 
 	_createClass(Events, [{
 		key: 'on',
 		value: function on(type, listener) {
 			var namespace = type.split('.');
-			this.eventStore[type] = this.eventStore[type] || [];
+			this[storeId][type] = this[storeId][type] || [];
 			listener.namespace = type;
 
-			this.eventStore[namespace[0]].push(listener);
+			this[storeId][namespace[0]].push(listener);
 		}
 	}, {
 		key: 'once',
@@ -35,14 +37,14 @@ var Events = function () {
 		value: function off(type, listener) {
 			var _this = this;
 
-			Object.keys(this.eventStore).forEach(function (eventType) {
+			Object.keys(this[storeId]).forEach(function (eventType) {
 
 				// 不含 namespace
 				if (type === eventType && !listener) {
-					delete _this.eventStore[eventType];
+					delete _this[storeId][eventType];
 					return;
 				} else {
-					var listeners = _this.eventStore[eventType];
+					var listeners = _this[storeId][eventType];
 
 					listeners.forEach(function (fn, i) {
 						var isMatch = fn.namespace.indexOf(type) !== -1;
@@ -52,7 +54,7 @@ var Events = function () {
 						}
 					});
 
-					_this.eventStore[eventType] = listeners.filter(function (fn) {
+					_this[storeId][eventType] = listeners.filter(function (fn) {
 						return typeof fn === 'function';
 					});
 				}
@@ -65,9 +67,9 @@ var Events = function () {
 
 			var result = void 0;
 
-			Object.keys(this.eventStore).forEach(function (eventType) {
+			Object.keys(this[storeId]).forEach(function (eventType) {
 				if (eventType.indexOf(type) !== -1) {
-					var listeners = _this2.eventStore[eventType];
+					var listeners = _this2[storeId][eventType];
 
 					listeners.forEach(function (fn, i) {
 						if (typeof fn === 'function') {

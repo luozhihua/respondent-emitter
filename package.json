@@ -1,6 +1,6 @@
 {
   "name": "respondent-emitter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An event emitter that can get return values of event listeners.",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,14 @@
     "once"
   ],
   "author": "luozhihua",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luozhihua/respondent-emitter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/luozhihua/respondent-emitter/issues"
+  },
+  "homepage": "https://github.com/luozhihua/respondent-emitter#readme",
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.24.1",
