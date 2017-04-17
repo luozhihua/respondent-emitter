@@ -7,16 +7,29 @@ export default class Events {
 	}
 
 	on (type, listener) {
-		let namespace = type.split('.')
-		this[storeId][type] = this[storeId][type] || []
-		listener.namespace = type
 
-		this[storeId][namespace[0]].push(listener)
+		if (typeof type !== 'string') {
+			for (let k in type) {
+				this.on(k, type[k])
+			}
+		} else {
+			let namespace = type.split('.')
+			this[storeId][type] = this[storeId][type] || []
+			listener.namespace = type
+
+			this[storeId][namespace[0]].push(listener)
+		}
 	}
 
 	once (type, listener) {
-		listener.once = true;
-		this.on(type, listener);
+		if (typeof type !== 'string') {
+			for (let k in type) {
+				this.once(k, type[k])
+			}
+		} else {
+			listener.once = true;
+			this.on(type, listener);
+		}
 	}
 
 	off (type, listener) {

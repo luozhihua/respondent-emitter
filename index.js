@@ -20,17 +20,30 @@ var Events = function () {
 	_createClass(Events, [{
 		key: 'on',
 		value: function on(type, listener) {
-			var namespace = type.split('.');
-			this[storeId][type] = this[storeId][type] || [];
-			listener.namespace = type;
 
-			this[storeId][namespace[0]].push(listener);
+			if (typeof type !== 'string') {
+				for (var k in type) {
+					this.on(k, type[k]);
+				}
+			} else {
+				var namespace = type.split('.');
+				this[storeId][type] = this[storeId][type] || [];
+				listener.namespace = type;
+
+				this[storeId][namespace[0]].push(listener);
+			}
 		}
 	}, {
 		key: 'once',
 		value: function once(type, listener) {
-			listener.once = true;
-			this.on(type, listener);
+			if (typeof type !== 'string') {
+				for (var k in type) {
+					this.once(k, type[k]);
+				}
+			} else {
+				listener.once = true;
+				this.on(type, listener);
+			}
 		}
 	}, {
 		key: 'off',
