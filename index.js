@@ -78,6 +78,10 @@ var Events = function () {
 		value: function emit(type) {
 			var _this2 = this;
 
+			for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+				args[_key - 1] = arguments[_key];
+			}
+
 			var result = void 0;
 
 			Object.keys(this[storeId]).forEach(function (eventType) {
@@ -86,7 +90,7 @@ var Events = function () {
 
 					listeners.forEach(function (fn, i) {
 						if (typeof fn === 'function') {
-							var res = fn.apply(_this2);
+							var res = fn.apply(_this2, args);
 
 							result = result === false ? false : res;
 							if (fn && fn.once) {

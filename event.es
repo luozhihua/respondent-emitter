@@ -58,7 +58,7 @@ export default class Events {
 		});
 	}
 
-	emit(type) {
+	emit(type, ...args) {
 		let result;
 
 		Object.keys(this[storeId]).forEach(eventType => {
@@ -67,7 +67,7 @@ export default class Events {
 
 				listeners.forEach((fn, i) => {
 					if (typeof fn === 'function') {
-						let res = fn.apply(this);
+						let res = fn.apply(this, args);
 
 						result = result === false ? false : res;
 						if (fn && fn.once) {
