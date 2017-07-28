@@ -1,9 +1,10 @@
-let storeId = Symbol('event_store_id');
+const STORE_NAME = 'RESPONDENT_EMITTER_STORE'
+const STORE = typeof Symbol !== 'undefined' ? Symbol('STORE_NAME') : 'STORE_NAME';
 
 export default class Events {
 
 	constructor(type) {
-		this[storeId] = {}
+		this[STORE] = {}
 	}
 
 	on (type, listener) {
@@ -14,10 +15,10 @@ export default class Events {
 			}
 		} else {
 			let namespace = type.split('.')
-			this[storeId][type] = this[storeId][type] || []
+			this[STORE][type] = this[STORE][type] || []
 			listener.namespace = type
 
-			this[storeId][namespace[0]].push(listener)
+			this[STORE][namespace[0]].push(listener)
 		}
 	}
 
@@ -34,14 +35,14 @@ export default class Events {
 
 	off (type, listener) {
 
-		Object.keys(this[storeId]).forEach(eventType => {
+		Object.keys(this[STORE]).forEach(eventType => {
 
 			// 不含 namespace
 			if (type === eventType && !listener) {
-				delete this[storeId][eventType];
+				delete this[STORE][eventType];
 				return;
 			} else {
-				let listeners = this[storeId][eventType];
+				let listeners = this[STORE][eventType];
 
 				listeners.forEach((fn, i) => {
 					let isMatch = fn.namespace.indexOf(type) !== -1
@@ -51,7 +52,7 @@ export default class Events {
 					}
 				})
 
-				this[storeId][eventType] = listeners.filter((fn)=>{
+				this[STORE][eventType] = listeners.filter((fn)=>{
 					return typeof fn === 'function'
 				})
 			}
@@ -61,9 +62,9 @@ export default class Events {
 	emit(type, ...args) {
 		let result;
 
-		Object.keys(this[storeId]).forEach(eventType => {
+		Object.keys(this[STORE]).forEach(eventType => {
 			if (eventType.indexOf(type) !== -1) {
-				let listeners = this[storeId][eventType];
+				let listeners = this[STORE][eventType];
 
 				listeners.forEach((fn, i) => {
 					if (typeof fn === 'function') {
